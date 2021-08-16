@@ -22,6 +22,14 @@ public class Symbol {
     terminal = null;
   }
 
+  public boolean isTerminal() {
+    return type == Type.Terminal;
+  }
+
+  public boolean isNonterminal() {
+    return type == Type.Nonterminal;
+  }
+
   @Override
   public String toString() {
     if (type == Type.Terminal) {
