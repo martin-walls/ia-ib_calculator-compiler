@@ -1,7 +1,10 @@
 package com.martinwalls.calculator_compiler;
 
+import com.martinwalls.calculator_compiler.tokens.Number;
+import com.martinwalls.calculator_compiler.tokens.Token;
+import com.martinwalls.calculator_compiler.tokens.TokenType;
+
 import java.io.IOException;
-import java.net.NetPermission;
 import java.util.ArrayDeque;
 import java.util.Queue;
 
@@ -12,7 +15,7 @@ import java.util.Queue;
 public class Lexer {
 
   class InvalidTokenException extends RuntimeException {
-    private String token;
+    private final String token;
 
     public InvalidTokenException(String token) {
       this.token = token;
@@ -23,19 +26,36 @@ public class Lexer {
     }
   }
 
-  private char currentChar = ' ';
-  private ArrayDeque<Token> tokenStream;
+  class InvalidInputException extends RuntimeException {
+    private final String invalidToken;
 
-  public Queue<Token> lexStdin() throws IOException {
-    tokenStream = new ArrayDeque<>();
+    public InvalidInputException(InvalidTokenException e) {
+      this.invalidToken = e.getToken();
+    }
+
+    public String getInvalidToken() {
+      return invalidToken;
+    }
+  }
+
+  // most recently read char from stdin
+  private char currentChar = ' ';
+
+  /**
+   * Lex the input from stdin into a stream of tokens.
+   * @return the token stream corresponding to the input
+   * @throws InvalidInputException if the input contains illegal tokens
+   */
+  public Queue<Token> lexStdin() throws IOException, InvalidInputException {
+    ArrayDeque<Token> tokenStream = new ArrayDeque<>();
     Token token;
     while (true) {
       // scan next token and make sure it's valid
       try {
         token = scan();
       } catch (InvalidTokenException e) {
-        System.out.println("Invalid token: " + e.getToken());
-        return null;
+//        System.out.println("Invalid token: " + e.getToken());
+        throw new InvalidInputException(e);
       }
       // keep scanning to end of line
       if (token.getType() == TokenType.EOL) {
@@ -47,12 +67,17 @@ public class Lexer {
   }
 
   /**
-   * Advance currentChar to next char from Stdin
+   * Advance <code>currentChar</code> to next char from stdin
    */
   private void nextChar() throws IOException {
     currentChar = (char) System.in.read();
   }
 
+  /**
+   * Read from stdin to scan for the next token.
+   * @return the next token in the input
+   * @throws InvalidTokenException if the input doesn't match any allowed token
+   */
   private Token scan() throws IOException, InvalidTokenException {
     // skip whitespace
     while (Character.isWhitespace(currentChar) && currentChar != '\n') {
@@ -80,19 +105,19 @@ public class Lexer {
     // plus
     if (currentChar == '+') {
       currentChar = ' ';
-      return new BinaryOp(TokenType.PLUS);
+      return new Token(TokenType.PLUS);
     }
 
     // minus
     if (currentChar == '-') {
       currentChar = ' ';
-      return new BinaryOp(TokenType.MINUS);
+      return new Token(TokenType.MINUS);
     }
 
     // multiply
     if (currentChar == '*') {
       currentChar = ' ';
-      return new BinaryOp(TokenType.MULT);
+      return new Token(TokenType.MULT);
     }
 
     // cos
@@ -104,13 +129,13 @@ public class Lexer {
       if (currentChar != 's') {throw new InvalidTokenException("co" + currentChar);}
       // input is "cos"
       currentChar = ' ';
-      return new UnaryPrefixOp(TokenType.COS);
+      return new Token(TokenType.COS);
     }
 
     // factorial
     if (currentChar == '!') {
       currentChar = ' ';
-      return new UnaryPostfixOp(TokenType.FACT);
+      return new Token(TokenType.FACT);
     }
 
     // brackets
