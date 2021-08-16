@@ -1,4 +1,4 @@
-package com.martinwalls.calculator_compiler;
+package com.martinwalls.calculator_compiler.tokens;
 
 public enum TokenType {
   NUM,
