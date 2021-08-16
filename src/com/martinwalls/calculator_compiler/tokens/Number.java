@@ -16,4 +16,17 @@ public class Number extends Token {
   public String toString() {
     return String.valueOf(value);
   }
+
+  @Override
+  public int hashCode() {
+    return Double.hashCode(value);
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) return true;
+    if (!(o instanceof Number)) return false;
+    Number n = (Number) o;
+    return value == n.value;
+  }
 }

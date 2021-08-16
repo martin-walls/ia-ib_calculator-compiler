@@ -4,7 +4,7 @@ import com.martinwalls.calculator_compiler.tokens.Token;
 
 public class Symbol {
 
-  enum Type {Terminal, Nonterminal}
+  public enum Type {Terminal, Nonterminal}
 
   final Token terminal;
   final Nonterminal nonterminal;
@@ -28,6 +28,26 @@ public class Symbol {
       return terminal.toString();
     } else {
       return nonterminal.name();
+    }
+  }
+
+  @Override
+  public int hashCode() {
+    return (terminal != null ? terminal.hashCode() : 0)
+        + (nonterminal != null ? nonterminal.hashCode() : 0)
+        + type.hashCode();
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (o == this) return true;
+    if (!(o instanceof Symbol)) return false;
+    Symbol s = (Symbol) o;
+    if (s.type != type) return false;
+    if (type == Type.Terminal) {
+      return terminal.equals(s.terminal);
+    } else {
+      return nonterminal == s.nonterminal;
     }
   }
 }
