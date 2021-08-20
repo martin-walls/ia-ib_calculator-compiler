@@ -1,12 +1,15 @@
 package com.martinwalls.calculator_compiler;
 
+import com.martinwalls.calculator_compiler.tokens.Number;
 import com.martinwalls.calculator_compiler.tokens.Token;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 public class Parser {
@@ -14,7 +17,7 @@ public class Parser {
   /**
    * Calculate the closure of the given item set in the given set of productions.
    */
-  static Set<Item> closure(Set<Item> items, Production[] productions) {
+  Set<Item> closure(Set<Item> items, Production[] productions) {
 
     List<Item> closure = new ArrayList<>(items);
 
@@ -41,13 +44,13 @@ public class Parser {
     return new HashSet<>(closure);
   }
 
-  static Set<Item> closure(Item item, Production[] productions) {
+  Set<Item> closure(Item item, Production[] productions) {
     Set<Item> items = new HashSet<>();
     items.add(item);
     return closure(items, productions);
   }
 
-  static Set<Item> allItems(Production[] productions) {
+  Set<Item> allItems(Production[] productions) {
     Set<Item> items = new HashSet<>();
     for (Production p : productions) {
       int length = p.body.length;
@@ -58,134 +61,86 @@ public class Parser {
     return items;
   }
 
-  static Set<Item> calculateGoto(Set<Item> I, Symbol X, Production[] productions) {
-    Set<Item> allItems = allItems(productions);
-    Set<Item> gotoItems = new HashSet<>();
-    for (Item j : allItems) {
-      if (j.dotPosition > 0 &&j.production.body[j.dotPosition - 1].equals(X)) {
-        for (Item i : I) {
-          if (j.production.equals(i.production) && j.dotPosition == i.dotPosition + 1) {
-            gotoItems.add(j);
-          }
+
+  public void parse(Queue<Token> input,
+                    Map<Integer, Map<Token.Type, Action>> actionTable,
+                    Map<Integer, Map<Nonterminal, Integer>> gotoTable) {
+
+    Deque<Integer> stack = new ArrayDeque<>();
+    // initial state
+    stack.push(0);
+
+    Deque<ParseTree> parseTreeStack = new ArrayDeque<>();
+
+    while (input.peek() != null) {
+
+      int currentState = stack.peek();
+      Token currentInput = input.peek();
+      Action action = actionTable.get(currentState).get(currentInput.getType());
+
+      if (action == null) {
+        // error
+        System.out.println("Parsing error");
+        break;
+      }
+
+      if (action.getType() == Action.Type.Shift) {
+        // shift to next input symbol
+        Token thisToken = input.remove();
+        // new state
+        int newState = action.getValue();
+        stack.push(newState);
+        parseTreeStack.push(new ParseTree(new Symbol(thisToken)));
+
+        System.out.println("[Shift " + newState + "]");
+
+      } else if (action.getType() == Action.Type.Reduce) {
+        // which production to reduce by
+        int productionNo = action.getValue();
+        Production production = Grammar.productions[productionNo];
+
+        ParseTree reducedTree = new ParseTree(new Symbol(production.head));
+        ParseTree[] treeChildren = new ParseTree[production.getLength()];
+
+        // pop body of production from the stack
+        for (int i = 0; i < production.getLength(); i++) {
+          stack.pop();
+          treeChildren[production.getLength() - 1 - i] = parseTreeStack.pop();
         }
-      }
-    }
-    return gotoItems;
-  }
 
-  static Item gotoItem(Item i, Symbol X, Production[] productions) {
-    Set<Item> allItems = allItems(productions);
-    Item gotoTarget = new Item(i.production, i.dotPosition + 1);
-    if (allItems.contains(gotoTarget)) {
-      return gotoTarget;
-    }
-    return null;
-  }
+        reducedTree.addChildren(treeChildren);
+        parseTreeStack.push(reducedTree);
 
-//  static Set<State> groupItemsIntoStates(Set<Item> items, Nonterminal startSymbol, Production[] productions) {
-//    Set<Item> kernelItems = new HashSet<>();
-//    for (Item i : items) {
-//      if (i.dotPosition > 0 || i.production.head == startSymbol) {
-//        kernelItems.add(i);
-//      }
-//    }
-//    Set<State> groups = new HashSet<>();
-//    for (Item k : kernelItems) {
-//      Set<Item> kSet = new HashSet<>();
-//      kSet.add(k);
-//      groups.add(new s);
-//    }
-//    return groups;
-//  }
+        // find new state from goto table
+        int newState = gotoTable.get(stack.peek()).get(production.head);
+        stack.push(newState);
 
-  static Set<Item> getKernelItems(Set<Item> items, Nonterminal startSymbol) {
-    Set<Item> kernelItems = new HashSet<>();
-    for (Item i : items) {
-      if (i.dotPosition > 0 || i.production.head == startSymbol) {
-        kernelItems.add(i);
-      }
-    }
-    return kernelItems;
-  }
+        System.out.println("[Reduce " + productionNo + "] " + production.toString());
 
-  static Set<Item> getKernelItems(Set<Item> items) {
-    Set<Item> kernelItems = new HashSet<>();
-    for (Item i : items) {
-      if (i.dotPosition > 0) {
-        kernelItems.add(i);
-      }
-    }
-    return kernelItems;
-  }
-
-
-  static Map<Integer, Map<Token, Action>> generateActionTable(Map<Integer, Item> states, Production[] productions) {
-
-    Map<Integer, Map<Token, Action>> actions = new HashMap<>();
-
-    Map<Item, Integer> reverseLookupStates = new HashMap<>();
-    for (int i : states.keySet()) {
-      reverseLookupStates.put(states.get(i), i);
-    }
-
-    for (int i : states.keySet()) {
-      Map<Token, Action> thisRow = new HashMap<>();
-
-      Item kernelItem = states.get(i);
-
-      Set<Item> closure = closure(kernelItem, productions);
-
-
-      for (Item c : closure) {
-        if (c.dotPosition < c.production.body.length) {
-          Symbol symbolAfterDot = c.production.body[c.dotPosition];
-          if (symbolAfterDot.isTerminal()) {
-
-            Item gotoItem = gotoItem(c, symbolAfterDot, productions);
-
-            if (gotoItem != null) {
-              thisRow.put(symbolAfterDot.terminal, Action.shift(reverseLookupStates.get(gotoItem)))
-            }
-          }
-        } else if (c.dotPosition == c.production.body.length) {
-
-        }
+      } else if (action.getType() == Action.Type.Accept) {
+        System.out.println("[Accept]");
+        System.out.println();
+        System.out.println(parseTreeStack.pop());
+        break;
       }
 
-      actions.put(i, thisRow);
     }
-  }
-
-  static Map<Integer, Map<Nonterminal, Integer>> generateStatesGotoTable() {
 
   }
+
+
 
 
   public static void main(String[] args) {
+    Parser parser = new Parser();
 
-//    Item f = new Item(Grammar.productions[12], 1);
-//
-//    Set<Item> i = new HashSet<>();
-//    i.add(f);
-//
-//    Set<Item> c = closure(i, Grammar.productions);
-//
-//    System.out.println(c);
+    Queue<Token> input = new ArrayDeque<>();
+    input.add(new Number(5));
+    input.add(Token.plus());
+    input.add(new Number(3));
+    input.add(Token.eol());
 
-//    Set<Item> g = calculateGoto(i, new Symbol(new Token(TokenType.PLUS)), Grammar.productions);
-//
-//    System.out.println(g);
-//    System.out.println(closure(g, Grammar.productions));
-
-//    System.out.println(allItems(Grammar.productions));
-
-    // collection of sets for augmented grammar (states)
-    Set<Set<Item>> groups = groupItemsIntoStates(allItems(Grammar.productions), Nonterminal.Expr_aug, Grammar.productions);
-
-    for (Set<Item> s : groups) {
-      System.out.println(s);
-      System.out.println();
-    }
+    parser.parse(input, Grammar.actionTable, Grammar.gotoTable);
 
   }
 
