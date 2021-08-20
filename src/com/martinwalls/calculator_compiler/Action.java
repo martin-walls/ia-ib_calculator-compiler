@@ -31,4 +31,15 @@ public class Action {
   public int getValue() {
     return value;
   }
+
+  @Override
+  public String toString() {
+    if (type == Type.Shift) {
+      return "Shift " + value;
+    } else if (type == Type.Reduce) {
+      return "Reduce " + value;
+    } else {
+      return "Accept";
+    }
+  }
 }
