@@ -15,6 +15,10 @@ public class Production {
     this.index = index;
   }
 
+  public int getLength() {
+    return body.length;
+  }
+
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
