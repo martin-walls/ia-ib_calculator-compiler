@@ -5,19 +5,19 @@ public class Action {
   public enum Type {Shift, Reduce, Accept}
 
   private final Type type;
-  private final int toState;
+  private final int value;
 
-  public Action(Type type, int toState) {
+  public Action(Type type, int value) {
     this.type = type;
-    this.toState = toState;
+    this.value = value;
   }
 
   public static Action shift(int toState) {
     return new Action(Type.Shift, toState);
   }
 
-  public static Action reduce(int toState) {
-    return new Action(Type.Reduce, toState);
+  public static Action reduce(int productionNo) {
+    return new Action(Type.Reduce, productionNo);
   }
 
   public static Action accept() {
@@ -28,7 +28,7 @@ public class Action {
     return type;
   }
 
-  public int getToState() {
-    return toState;
+  public int getValue() {
+    return value;
   }
 }
