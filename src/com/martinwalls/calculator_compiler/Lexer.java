@@ -2,7 +2,6 @@ package com.martinwalls.calculator_compiler;
 
 import com.martinwalls.calculator_compiler.tokens.Number;
 import com.martinwalls.calculator_compiler.tokens.Token;
-import com.martinwalls.calculator_compiler.tokens.TokenType;
 
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -57,11 +56,11 @@ public class Lexer {
 //        System.out.println("Invalid token: " + e.getToken());
         throw new InvalidInputException(e);
       }
+      tokenStream.add(token);
       // keep scanning to end of line
-      if (token.getType() == TokenType.EOL) {
+      if (token.getType() == Token.Type.EOL) {
         break;
       }
-      tokenStream.add(token);
     }
     return tokenStream;
   }
@@ -105,19 +104,19 @@ public class Lexer {
     // plus
     if (currentChar == '+') {
       currentChar = ' ';
-      return new Token(TokenType.PLUS);
+      return new Token(Token.Type.PLUS);
     }
 
     // minus
     if (currentChar == '-') {
       currentChar = ' ';
-      return new Token(TokenType.MINUS);
+      return new Token(Token.Type.MINUS);
     }
 
     // multiply
     if (currentChar == '*') {
       currentChar = ' ';
-      return new Token(TokenType.MULT);
+      return new Token(Token.Type.MULT);
     }
 
     // cos
@@ -129,29 +128,29 @@ public class Lexer {
       if (currentChar != 's') {throw new InvalidTokenException("co" + currentChar);}
       // input is "cos"
       currentChar = ' ';
-      return new Token(TokenType.COS);
+      return new Token(Token.Type.COS);
     }
 
     // factorial
     if (currentChar == '!') {
       currentChar = ' ';
-      return new Token(TokenType.FACT);
+      return new Token(Token.Type.FACT);
     }
 
     // brackets
     if (currentChar == '(') {
       currentChar = ' ';
-      return new Token(TokenType.OPEN_BRACKET);
+      return new Token(Token.Type.OPEN_BRACKET);
     }
     if (currentChar == ')') {
       currentChar = ' ';
-      return new Token(TokenType.CLOSE_BRACKET);
+      return new Token(Token.Type.CLOSE_BRACKET);
     }
 
     // end of line
     if (currentChar == '\n') {
       currentChar = ' ';
-      return new Token(TokenType.EOL);
+      return new Token(Token.Type.EOL);
     }
 
     // not one of the allowed tokens

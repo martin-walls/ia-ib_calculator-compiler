@@ -4,7 +4,7 @@ public class Number extends Token {
   private double value;
 
   public Number(double value) {
-    super(TokenType.NUM);
+    super(Type.NUM);
     this.value = value;
   }
 

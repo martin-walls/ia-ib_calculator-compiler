@@ -1,13 +1,25 @@
 package com.martinwalls.calculator_compiler.tokens;
 
 public class Token {
-  private final TokenType type;
+  public enum Type {
+    NUM,
+    PLUS,
+    MINUS,
+    MULT,
+    COS,
+    FACT,
+    OPEN_BRACKET,
+    CLOSE_BRACKET,
+    EOL;
+  }
 
-  public Token(TokenType t) {
+  private final Type type;
+
+  public Token(Type t) {
     this.type = t;
   }
 
-  public TokenType getType() {
+  public Type getType() {
     return type;
   }
 
@@ -27,5 +39,41 @@ public class Token {
     if (!(o instanceof Token)) return false;
     Token t = (Token) o;
     return type == t.type;
+  }
+
+  public static Token plus() {
+    return new Token(Type.PLUS);
+  }
+
+  public static Token minus() {
+    return new Token(Type.MINUS);
+  }
+
+  public static Token mult() {
+    return new Token(Type.MULT);
+  }
+
+  public static Token cos() {
+    return new Token(Type.COS);
+  }
+
+  public static Token fact() {
+    return new Token(Type.FACT);
+  }
+
+  public static Token openBracket() {
+    return new Token(Type.OPEN_BRACKET);
+  }
+
+  public static Token closeBracket() {
+    return new Token(Type.CLOSE_BRACKET);
+  }
+
+  public static Token eol() {
+    return new Token(Type.EOL);
+  }
+
+  public static Token num() {
+    return new Token(Type.NUM);
   }
 }
