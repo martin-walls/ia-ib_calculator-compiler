@@ -1,0 +1,109 @@
+> 3+5
+[Parse tree]
+Expr
+├──── Expr ─ C ─ D ─ E ─ F ─ G ─ 3.0
+├──── PLUS
+└──── C ─ D ─ E ─ F ─ G ─ 5.0
+[Result] 8.0
+
+
+> 2-7
+[Parse tree]
+Expr ─ C
+       ├─ C ─ D ─ E ─ F ─ G ─ 2.0
+       ├─ MINUS
+       └─ D ─ E ─ F ─ G ─ 7.0
+[Result] -5.0
+
+
+> 4.2*5.4
+[Parse tree]
+Expr ─ C ─ D
+           ├─ E ─ F ─ G ─ 4.2
+           ├─ MULT
+           └─ D ─ E ─ F ─ G ─ 5.4
+[Result] 22.680000000000003
+
+
+> cos0
+[Parse tree]
+Expr ─ C ─ D ─ E
+               ├─ COS
+               └─ F ─ G ─ 0.0
+[Result] 1.0
+
+
+> 5!
+[Parse tree]
+Expr ─ C ─ D ─ E ─ F
+                   ├─ G ─ 5.0
+                   └─ FACT
+[Result] 120.0
+
+
+> 1+2*2.2-3!
+[Parse tree]
+Expr
+├──── Expr ─ C ─ D ─ E ─ F ─ G ─ 1.0
+├──── PLUS
+└──── C
+      ├─ C ─ D
+      |      ├─ E ─ F ─ G ─ 2.0
+      |      ├─ MULT
+      |      └─ D ─ E ─ F ─ G ─ 2.2
+      ├─ MINUS
+      └─ D ─ E ─ F
+                 ├─ G ─ 3.0
+                 └─ FACT
+[Result] -0.5999999999999996
+
+
+> (3*5)+1
+[Parse tree]
+Expr
+├──── Expr ─ C ─ D ─ E ─ F ─ G
+|                            ├─ OPEN_BRACKET
+|                            ├─ Expr ─ C ─ D
+|                            |             ├─ E ─ F ─ G ─ 3.0
+|                            |             ├─ MULT
+|                            |             └─ D ─ E ─ F ─ G ─ 5.0
+|                            └─ CLOSE_BRACKET
+├──── PLUS
+└──── C ─ D ─ E ─ F ─ G ─ 1.0
+[Result] 16.0
+
+
+> cos(2*.2)*4!
+[Parse tree]
+Expr ─ C ─ D
+           ├─ E
+           |  ├─ COS
+           |  └─ F ─ G
+           |         ├─ OPEN_BRACKET
+           |         ├─ Expr ─ C ─ D
+           |         |             ├─ E ─ F ─ G ─ 2.0
+           |         |             ├─ MULT
+           |         |             └─ D ─ E ─ F ─ G ─ 0.2
+           |         └─ CLOSE_BRACKET
+           ├─ MULT
+           └─ D ─ E ─ F
+                      ├─ G ─ 4.0
+                      └─ FACT
+[Result] 22.105463856069242
+
+
+
+
+
+> 5/2
+[Lexing error] - invalid token "/"
+[Could not lex input. Resetting]
+
+
+> 5..2
+[Lexing error] - invalid token "5..2"
+[Could not lex input. Resetting]
+
+
+> (1+3.
+[Could not parse input. Resetting]
