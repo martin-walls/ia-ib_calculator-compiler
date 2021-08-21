@@ -1,4 +1,4 @@
-package com.martinwalls.calculator_compiler.tokens;
+package com.martinwalls.calculator_compiler;
 
 public class Number extends Token {
   private double value;
