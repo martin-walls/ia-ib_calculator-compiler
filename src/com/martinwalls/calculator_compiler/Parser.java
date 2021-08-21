@@ -1,8 +1,5 @@
 package com.martinwalls.calculator_compiler;
 
-import com.martinwalls.calculator_compiler.tokens.Number;
-import com.martinwalls.calculator_compiler.tokens.Token;
-
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -62,7 +59,7 @@ public class Parser {
   }
 
 
-  public void parse(Queue<Token> input,
+  public ParseTree parse(Queue<Token> input,
                     Map<Integer, Map<Token.Type, Action>> actionTable,
                     Map<Integer, Map<Nonterminal, Integer>> gotoTable) {
 
@@ -80,7 +77,7 @@ public class Parser {
 
       if (action == null) {
         // error
-        System.out.println("Parsing error");
+//        System.out.println("    [Parsing error]");
         break;
       }
 
@@ -92,7 +89,7 @@ public class Parser {
         stack.push(newState);
         parseTreeStack.push(new ParseTree(new Symbol(thisToken)));
 
-        System.out.println("[Shift " + newState + "]");
+//        System.out.println("    [Shift " + newState + "]");
 
       } else if (action.getType() == Action.Type.Reduce) {
         // which production to reduce by
@@ -115,34 +112,20 @@ public class Parser {
         int newState = gotoTable.get(stack.peek()).get(production.head);
         stack.push(newState);
 
-        System.out.println("[Reduce " + productionNo + "] " + production.toString());
+//        System.out.println("    [Reduce " + productionNo + "] " + production.toString());
 
       } else if (action.getType() == Action.Type.Accept) {
-        System.out.println("[Accept]");
-        System.out.println();
-        System.out.println(parseTreeStack.pop());
-        break;
+//        System.out.println("    [Accept]\n");
+        return(parseTreeStack.pop());
       }
 
     }
-
+    // we shouldn't ever get here; if we have, something went wrong parsing
+    return null;
   }
 
 
 
-
-  public static void main(String[] args) {
-    Parser parser = new Parser();
-
-    Queue<Token> input = new ArrayDeque<>();
-    input.add(new Number(5));
-    input.add(Token.plus());
-    input.add(new Number(3));
-    input.add(Token.eol());
-
-    parser.parse(input, Grammar.actionTable, Grammar.gotoTable);
-
-  }
 
 
 }
