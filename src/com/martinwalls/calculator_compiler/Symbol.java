@@ -1,7 +1,5 @@
 package com.martinwalls.calculator_compiler;
 
-import com.martinwalls.calculator_compiler.tokens.Token;
-
 public class Symbol {
 
   public enum Type {Terminal, Nonterminal}
@@ -20,6 +18,14 @@ public class Symbol {
     type = Type.Nonterminal;
     this.nonterminal = nonterminal;
     terminal = null;
+  }
+
+  public Token getTerminal() {
+    return terminal;
+  }
+
+  public Nonterminal getNonterminal() {
+    return nonterminal;
   }
 
   public boolean isTerminal() {
