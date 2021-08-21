@@ -1,8 +1,5 @@
 package com.martinwalls.calculator_compiler;
 
-import com.martinwalls.calculator_compiler.tokens.Number;
-import com.martinwalls.calculator_compiler.tokens.Token;
-
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Queue;
@@ -13,7 +10,7 @@ import java.util.Queue;
  */
 public class Lexer {
 
-  class InvalidTokenException extends RuntimeException {
+  class InvalidTokenException extends Exception {
     private final String token;
 
     public InvalidTokenException(String token) {
@@ -25,27 +22,15 @@ public class Lexer {
     }
   }
 
-  class InvalidInputException extends RuntimeException {
-    private final String invalidToken;
-
-    public InvalidInputException(InvalidTokenException e) {
-      this.invalidToken = e.getToken();
-    }
-
-    public String getInvalidToken() {
-      return invalidToken;
-    }
-  }
-
   // most recently read char from stdin
   private char currentChar = ' ';
 
   /**
    * Lex the input from stdin into a stream of tokens.
-   * @return the token stream corresponding to the input
-   * @throws InvalidInputException if the input contains illegal tokens
+   * @return the token stream corresponding to the input, or <code>null</code> if the
+   *         input is invalid
    */
-  public Queue<Token> lexStdin() throws IOException, InvalidInputException {
+  public Queue<Token> lexStdin() throws IOException {
     ArrayDeque<Token> tokenStream = new ArrayDeque<>();
     Token token;
     while (true) {
@@ -53,8 +38,10 @@ public class Lexer {
       try {
         token = scan();
       } catch (InvalidTokenException e) {
-//        System.out.println("Invalid token: " + e.getToken());
-        throw new InvalidInputException(e);
+        System.out.println("[Lexing error] - invalid token \"" + e.getToken() + "\"");
+        // clear any remaining input that hasn't been read yet
+        while (System.in.available() > 0 && System.in.read() != '\n') {}
+        return null;
       }
       tokenStream.add(token);
       // keep scanning to end of line
@@ -155,17 +142,6 @@ public class Lexer {
 
     // not one of the allowed tokens
     throw new InvalidTokenException(currentChar + "");
-  }
-
-  public static void main(String[] args) throws IOException {
-    Lexer l = new Lexer();
-    while (true) {
-      Queue<Token> tokens = l.lexStdin();
-
-      while (!tokens.isEmpty()) {
-        System.out.print(tokens.poll() + " ");
-      }
-    }
   }
 
 }
