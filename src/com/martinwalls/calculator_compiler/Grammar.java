@@ -1,7 +1,5 @@
 package com.martinwalls.calculator_compiler;
 
-import com.martinwalls.calculator_compiler.tokens.Token;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -307,6 +305,7 @@ public class Grammar {
     table.put(5, row5);
 
     Map<Nonterminal, Integer> row9 = new HashMap<>();
+    row9.put(Nonterminal.Expr, 15);
     row9.put(Nonterminal.C, 2);
     row9.put(Nonterminal.D, 3);
     row9.put(Nonterminal.E, 4);
