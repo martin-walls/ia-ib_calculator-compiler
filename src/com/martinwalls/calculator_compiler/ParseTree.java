@@ -7,8 +7,8 @@ import java.util.List;
 
 public class ParseTree {
 
-  final Symbol root;
-  final List<ParseTree> children;
+  private final Symbol root;
+  private final List<ParseTree> children;
 
   public ParseTree(Symbol root, List<ParseTree> children) {
     this.root = root;
@@ -77,7 +77,4 @@ public class ParseTree {
       }
     }
   }
-
-
-
 }
