@@ -4,9 +4,9 @@ public class Symbol {
 
   public enum Type {Terminal, Nonterminal}
 
-  final Token terminal;
-  final Nonterminal nonterminal;
-  final Type type;
+  private final Token terminal;
+  private final Nonterminal nonterminal;
+  private final Type type;
 
   public Symbol(Token terminal) {
     type = Type.Terminal;
@@ -26,6 +26,10 @@ public class Symbol {
 
   public Nonterminal getNonterminal() {
     return nonterminal;
+  }
+
+  public Type getType() {
+    return type;
   }
 
   public boolean isTerminal() {

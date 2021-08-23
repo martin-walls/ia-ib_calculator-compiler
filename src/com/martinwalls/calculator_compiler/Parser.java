@@ -99,8 +99,8 @@ public class Parser {
       Item A = closure.get(i);
       if (A.getDotPosition() < A.getProduction().getLength()) {
         Symbol symbolToRightOfDot = A.getProduction().getBody()[A.getDotPosition()];
-        if (symbolToRightOfDot.type == Symbol.Type.Nonterminal) {
-          Nonterminal B = symbolToRightOfDot.nonterminal;
+        if (symbolToRightOfDot.isNonterminal()) {
+          Nonterminal B = symbolToRightOfDot.getNonterminal();
           for (Production BProduction : productions) {
             if (BProduction.getHead() == B) {
               Item BItem = new Item(BProduction, 0);
