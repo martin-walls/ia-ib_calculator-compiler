@@ -2,9 +2,9 @@ package com.martinwalls.calculator_compiler;
 
 public class Production {
 
-  final Nonterminal head;
-  final Symbol[] body;
-  final int index;
+  private final Nonterminal head;
+  private final Symbol[] body;
+  private final int index;
 
   public Production(Nonterminal head, Symbol[] body, int index) {
     this.head = head;
@@ -13,6 +13,18 @@ public class Production {
       this.body[i] = body[i];
     }
     this.index = index;
+  }
+
+  public Nonterminal getHead() {
+    return head;
+  }
+
+  public Symbol[] getBody() {
+    return body;
+  }
+
+  public int getIndex() {
+    return index;
   }
 
   public int getLength() {

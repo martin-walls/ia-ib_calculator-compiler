@@ -34,9 +34,9 @@ public class Item {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append(production.head.name());
+    sb.append(production.getHead().name());
     sb.append(" -> ");
-    Symbol[] body = production.body;
+    Symbol[] body = production.getBody();
     for (int i = 0; i < body.length; i++) {
       if (dotPosition == i) {
         sb.append(".");

@@ -54,7 +54,7 @@ public class Parser {
         int productionNo = action.getValue();
         Production production = Grammar.productions[productionNo];
 
-        ParseTree reducedTree = new ParseTree(new Symbol(production.head));
+        ParseTree reducedTree = new ParseTree(new Symbol(production.getHead()));
         ParseTree[] treeChildren = new ParseTree[production.getLength()];
 
         // pop body of production from the stack
@@ -67,7 +67,7 @@ public class Parser {
         parseTreeStack.push(reducedTree);
 
         // find new state from goto table
-        int newState = gotoTable.get(stack.peek()).get(production.head);
+        int newState = gotoTable.get(stack.peek()).get(production.getHead());
         stack.push(newState);
 
         if (PRINT_PARSE_STEPS) {
@@ -98,11 +98,11 @@ public class Parser {
     while (i < closure.size()) {
       Item A = closure.get(i);
       if (A.getDotPosition() < A.getProduction().getLength()) {
-        Symbol symbolToRightOfDot = A.getProduction().body[A.getDotPosition()];
+        Symbol symbolToRightOfDot = A.getProduction().getBody()[A.getDotPosition()];
         if (symbolToRightOfDot.type == Symbol.Type.Nonterminal) {
           Nonterminal B = symbolToRightOfDot.nonterminal;
           for (Production BProduction : productions) {
-            if (BProduction.head == B) {
+            if (BProduction.getHead() == B) {
               Item BItem = new Item(BProduction, 0);
               if (!closure.contains(BItem)) {
                 closure.add(BItem);
@@ -119,8 +119,7 @@ public class Parser {
   private static Set<Item> allItems(Production[] productions) {
     Set<Item> items = new HashSet<>();
     for (Production p : productions) {
-      int length = p.body.length;
-      for (int dotPos = 0; dotPos <= length; dotPos++) {
+      for (int dotPos = 0; dotPos <= p.getLength(); dotPos++) {
         items.add(new Item(p, dotPos));
       }
     }
