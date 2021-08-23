@@ -2,12 +2,20 @@ package com.martinwalls.calculator_compiler;
 
 public class Item {
 
-  final Production production;
-  final int dotPosition;
+  private final Production production;
+  private final int dotPosition;
 
   public Item(Production production, int dotPosition) {
     this.production = production;
     this.dotPosition = dotPosition;
+  }
+
+  public Production getProduction() {
+    return production;
+  }
+
+  public int getDotPosition() {
+    return dotPosition;
   }
 
   @Override

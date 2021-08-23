@@ -25,8 +25,8 @@ public class Parser {
 
     while (i < closure.size()) {
       Item A = closure.get(i);
-      if (A.dotPosition < A.production.body.length) {
-        Symbol symbolToRightOfDot = A.production.body[A.dotPosition];
+      if (A.getDotPosition() < A.getProduction().getLength()) {
+        Symbol symbolToRightOfDot = A.getProduction().body[A.getDotPosition()];
         if (symbolToRightOfDot.type == Symbol.Type.Nonterminal) {
           Nonterminal B = symbolToRightOfDot.nonterminal;
           for (Production BProduction : productions) {
