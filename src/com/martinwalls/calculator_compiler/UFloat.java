@@ -1,10 +1,10 @@
 package com.martinwalls.calculator_compiler;
 
-public class Number extends Token {
+public class UFloat extends Token {
   private double value;
 
-  public Number(double value) {
-    super(Type.NUM);
+  public UFloat(double value) {
+    super(Type.UFLOAT);
     this.value = value;
   }
 
@@ -25,8 +25,8 @@ public class Number extends Token {
   @Override
   public boolean equals(Object o) {
     if (o == this) return true;
-    if (!(o instanceof Number)) return false;
-    Number n = (Number) o;
+    if (!(o instanceof UFloat)) return false;
+    UFloat n = (UFloat) o;
     return value == n.value;
   }
 }

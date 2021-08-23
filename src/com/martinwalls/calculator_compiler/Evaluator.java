@@ -57,33 +57,44 @@ public class Evaluator {
 
   private double F(List<ParseTree> children) {
     if (children.size() == 1) {
-      // F -> G
-      return G(children.get(0).getChildren());
+      // F -> sG
+      return sG(children.get(0).getChildren());
     } else {
-      // F -> G!
-      double g = G(children.get(0).getChildren());
+      // F -> uG!
+      double g = uG(children.get(0).getChildren());
       return factorial(g);
     }
   }
 
-  private double G(List<ParseTree> children) {
+  private double sG(List<ParseTree> children) {
     if (children.size() == 1) {
-      // G -> NUM
-      return num(children.get(0));
+      // sG -> uG
+      return uG(children.get(0).getChildren());
     } else {
-      // G -> ( expr )
+      // sG -> - ufloat
+      double ufloat = ufloat(children.get(1));
+      return -ufloat;
+    }
+  }
+
+  private double uG(List<ParseTree> children) {
+    if (children.size() == 1) {
+      // uG -> ufloat
+      return ufloat(children.get(0));
+    } else {
+      // uG -> ( expr )
       return expr(children.get(1).getChildren());
     }
   }
 
-  private double num(ParseTree tree) {
+  private double ufloat(ParseTree tree) {
     Symbol root = tree.getRoot();
     if (root.isTerminal()) {
-      if (root.getTerminal().getType() == Token.Type.NUM) {
-        return ((Number) root.getTerminal()).getValue();
+      if (root.getTerminal().getType() == Token.Type.UFLOAT) {
+        return ((UFloat) root.getTerminal()).getValue();
       }
     }
-    // if not a number token
+    // if not a ufloat token
     return Double.NaN;
   }
 

@@ -2,7 +2,7 @@ package com.martinwalls.calculator_compiler;
 
 public class Token {
   public enum Type {
-    NUM,
+    UFLOAT,
     PLUS,
     MINUS,
     MULT,
@@ -73,7 +73,7 @@ public class Token {
     return new Token(Type.EOL);
   }
 
-  public static Token num() {
-    return new Token(Type.NUM);
+  public static Token ufloat() {
+    return new Token(Type.UFLOAT);
   }
 }

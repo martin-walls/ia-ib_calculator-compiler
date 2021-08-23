@@ -85,7 +85,7 @@ public class Lexer {
       } catch (NumberFormatException e) {
         throw new InvalidTokenException(b.toString());
       }
-      return new Number(value);
+      return new UFloat(value);
     }
 
     // plus
