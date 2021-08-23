@@ -13,58 +13,9 @@ public class Parser {
 
   private final boolean PRINT_PARSE_STEPS = false;
 
-
-  /**
-   * Calculate the closure of the given item set in the given set of productions.
-   */
-  static Set<Item> closure(Set<Item> items, Production[] productions) {
-
-    List<Item> closure = new ArrayList<>(items);
-
-    int i=0;
-
-    while (i < closure.size()) {
-      Item A = closure.get(i);
-      if (A.getDotPosition() < A.getProduction().getLength()) {
-        Symbol symbolToRightOfDot = A.getProduction().body[A.getDotPosition()];
-        if (symbolToRightOfDot.type == Symbol.Type.Nonterminal) {
-          Nonterminal B = symbolToRightOfDot.nonterminal;
-          for (Production BProduction : productions) {
-            if (BProduction.head == B) {
-              Item BItem = new Item(BProduction, 0);
-              if (!closure.contains(BItem)) {
-                closure.add(BItem);
-              }
-            }
-          }
-        }
-      }
-      i++;
-    }
-    return new HashSet<>(closure);
-  }
-
-  static Set<Item> closure(Item item, Production[] productions) {
-    Set<Item> items = new HashSet<>();
-    items.add(item);
-    return closure(items, productions);
-  }
-
-  static Set<Item> allItems(Production[] productions) {
-    Set<Item> items = new HashSet<>();
-    for (Production p : productions) {
-      int length = p.body.length;
-      for (int dotPos = 0; dotPos <= length; dotPos++) {
-        items.add(new Item(p, dotPos));
-      }
-    }
-    return items;
-  }
-
-
   public ParseTree parse(Queue<Token> input,
-                    Map<Integer, Map<Token.Type, Action>> actionTable,
-                    Map<Integer, Map<Nonterminal, Integer>> gotoTable) {
+                         Map<Integer, Map<Token.Type, Action>> actionTable,
+                         Map<Integer, Map<Nonterminal, Integer>> gotoTable) {
 
     Deque<Integer> stack = new ArrayDeque<>();
     // initial state
@@ -127,7 +78,7 @@ public class Parser {
         if (PRINT_PARSE_STEPS) {
           System.out.println("    [Accept]\n");
         }
-        return(parseTreeStack.pop());
+        return (parseTreeStack.pop());
       }
 
     }
@@ -135,19 +86,45 @@ public class Parser {
     return null;
   }
 
+  /**
+   * Calculate the closure of the given item set in the given set of productions.
+   */
+  private static Set<Item> closure(Set<Item> items, Production[] productions) {
 
-  public static void main(String[] args) {
+    List<Item> closure = new ArrayList<>(items);
 
-    for (Item i : allItems(Grammar.productions)) {
-      for (Item j : closure(i, Grammar.productions)) {
-        System.out.println(j);
+    int i = 0;
+
+    while (i < closure.size()) {
+      Item A = closure.get(i);
+      if (A.getDotPosition() < A.getProduction().getLength()) {
+        Symbol symbolToRightOfDot = A.getProduction().body[A.getDotPosition()];
+        if (symbolToRightOfDot.type == Symbol.Type.Nonterminal) {
+          Nonterminal B = symbolToRightOfDot.nonterminal;
+          for (Production BProduction : productions) {
+            if (BProduction.head == B) {
+              Item BItem = new Item(BProduction, 0);
+              if (!closure.contains(BItem)) {
+                closure.add(BItem);
+              }
+            }
+          }
+        }
       }
-      System.out.println("\n\n\n");
+      i++;
     }
-
-
+    return new HashSet<>(closure);
   }
 
-
+  private static Set<Item> allItems(Production[] productions) {
+    Set<Item> items = new HashSet<>();
+    for (Production p : productions) {
+      int length = p.body.length;
+      for (int dotPos = 0; dotPos <= length; dotPos++) {
+        items.add(new Item(p, dotPos));
+      }
+    }
+    return items;
+  }
 
 }
