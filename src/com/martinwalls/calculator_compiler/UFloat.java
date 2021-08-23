@@ -1,7 +1,7 @@
 package com.martinwalls.calculator_compiler;
 
 public class UFloat extends Token {
-  private double value;
+  private final double value;
 
   public UFloat(double value) {
     super(Type.UFLOAT);
