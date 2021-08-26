@@ -1,15 +1,13 @@
 package com.martinwalls.calculator_compiler;
 
 public class UFloat extends Token {
-  private final double value;
-
   public UFloat(double value) {
     super(Type.UFLOAT);
     this.value = value;
   }
 
   public double getValue() {
-    return value;
+    return (double) value;
   }
 
   @Override
@@ -18,15 +16,12 @@ public class UFloat extends Token {
   }
 
   @Override
-  public int hashCode() {
-    return Double.hashCode(value);
+  protected boolean valueEquals(Token t) {
+    return value.equals(t.value);
   }
 
   @Override
-  public boolean equals(Object o) {
-    if (o == this) return true;
-    if (!(o instanceof UFloat)) return false;
-    UFloat n = (UFloat) o;
-    return value == n.value;
+  protected int valueHashcode() {
+    return value.hashCode();
   }
 }
